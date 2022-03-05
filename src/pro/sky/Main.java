@@ -1,15 +1,21 @@
 package pro.sky;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+
 public class Main {
 
     public static void main(String[] args) {
         Employee[] employeeList = generateEmployeeList();
         printList(employeeList);
-        System.out.println("Сумма затрат на зарплату в месяц: " + calculateTotalSumMonthSalary(employeeList) + " руб.");
+        System.out.println("Сумма затрат на зарплату в месяц: " + calculateTotalSumMonthSalary(employeeList).setScale(2) + " руб.");
         System.out.println("Сотрудник с минимальной зарплатой: " + findMinSalary(employeeList));
         System.out.println("Сотрудник с максимальной зарплатой: " + findMaxSalary(employeeList));
         System.out.println("Среднее значение зарплаты: " + calculateAverageMonthSalary(employeeList) + " руб./мес.");
         printListOfEmployee(employeeList);
+        setNewSalary(employeeList,0.3);
+        printList(employeeList);
+        System.out.println("Сумма затрат на зарплату в месяц: " + calculateTotalSumMonthSalary(employeeList).setScale(2) + " руб.");
     }
 
     public static String generateRandomEmployeeName() {
@@ -31,9 +37,9 @@ public class Main {
         return departmentId;
     }
 
-    public static int generateRandomSalary() {
+    public static BigDecimal generateRandomSalary() {
         java.util.Random random = new java.util.Random();
-        int randomSalary = random.nextInt(100_000) + 100_000;
+        BigDecimal randomSalary = BigDecimal.valueOf(random.nextInt(100_000) + 100_000);
         return randomSalary;
     }
 
@@ -52,41 +58,45 @@ public class Main {
         }
     }
 
-    public static int calculateTotalSumMonthSalary(Employee[] employeeList) {
-        int totalSumMonthSalary = 0;
+    public static BigDecimal calculateTotalSumMonthSalary(Employee[] employeeList) {
+        BigDecimal totalSumMonthSalary = new BigDecimal(0);
         for (int i = 0; i < employeeList.length; i++) {
-            totalSumMonthSalary += employeeList[i].getEmployeeSalary();
+            totalSumMonthSalary = totalSumMonthSalary.add(employeeList[i].getEmployeeSalary());
         }
         return totalSumMonthSalary;
     }
 
     public static Employee findMinSalary(Employee[] employeesList) {
         int id = 0;
-        int minSalary = employeesList[id].getEmployeeSalary();
+        double minSalary = employeesList[id].getEmployeeSalary().doubleValue();
         for (int i = 1; i < employeesList.length; i++) {
-            if (employeesList[i].getEmployeeSalary() < minSalary) {
+            if (employeesList[i].getEmployeeSalary().doubleValue() < minSalary) {
                 id = i;
-                minSalary = employeesList[i].getEmployeeSalary();
+                minSalary = employeesList[i].getEmployeeSalary().doubleValue();
             }
         }
         return employeesList[id];
     }
+
+//    public static Employee findMinSalaryInDepartment(Employee[] employeeList, int departmentId) {
+//
+//    }
 
     public static Employee findMaxSalary(Employee[] employeesList) {
         int id = 0;
-        int maxSalary = employeesList[id].getEmployeeSalary();
+        double maxSalary = employeesList[id].getEmployeeSalary().doubleValue();
         for (int i = 1; i < employeesList.length; i++) {
-            if (employeesList[i].getEmployeeSalary() > maxSalary) {
+            if (employeesList[i].getEmployeeSalary().doubleValue() > maxSalary) {
                 id = i;
-                maxSalary = employeesList[i].getEmployeeSalary();
+                maxSalary = employeesList[i].getEmployeeSalary().doubleValue();
             }
         }
         return employeesList[id];
     }
 
-    public static float calculateAverageMonthSalary(Employee[] employeesList) {
-        float averageMonthSalary = calculateTotalSumMonthSalary(employeesList);
-        averageMonthSalary = averageMonthSalary / employeesList.length;
+    public static BigDecimal calculateAverageMonthSalary(Employee[] employeesList) {
+        BigDecimal divisor = new BigDecimal(String.valueOf(employeesList.length));
+        BigDecimal averageMonthSalary = new BigDecimal(String.valueOf(calculateTotalSumMonthSalary(employeesList).divide(divisor, 2, RoundingMode.CEILING)));
         return averageMonthSalary;
     }
 
@@ -95,6 +105,18 @@ public class Main {
         for (int i = 0; i < employeeList.length; i++) {
             System.out.println(employeeList[i].getEmployeeName());
         }
+    }
+
+    public static Employee[] setNewSalary(Employee[] employeeList, double indexRate) {
+        double additionalSalary;
+        for (int i = 0; i < employeeList.length; i++) {
+           additionalSalary = employeeList[i].getEmployeeSalary().doubleValue() * indexRate / 100;
+           BigDecimal newSalary = new BigDecimal(additionalSalary);
+           newSalary = newSalary.setScale(2,RoundingMode.CEILING);
+           newSalary = newSalary.add(employeeList[i].getEmployeeSalary());
+           employeeList[i].setEmployeeSalary(newSalary);
+        }
+        return employeeList;
     }
 
 }
