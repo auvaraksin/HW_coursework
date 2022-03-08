@@ -1,6 +1,7 @@
 package pro.sky;
 
 import java.math.BigDecimal;
+import java.util.Objects;
 
 public class Employee {
     private int employeeId;
@@ -43,5 +44,18 @@ public class Employee {
     @Override
     public String toString() {
         return employeeId + " " + employeeName + " (" + departmentId + "), зарплата: " + employeeSalary.setScale(2) + " руб./мес.";
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Employee employee = (Employee) o;
+        return employeeId == employee.employeeId && employeeName.equals(employee.employeeName) && departmentId.equals(employee.departmentId) && employeeSalary.equals(employee.employeeSalary);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(employeeId, employeeName, employeeId, employeeSalary);
     }
 }
