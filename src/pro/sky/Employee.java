@@ -1,13 +1,16 @@
 package pro.sky;
 
+import java.math.BigDecimal;
+import java.util.Objects;
+
 public class Employee {
     private int employeeId;
     private String employeeName;
     private String departmentId;
-    private int employeeSalary;
+    private BigDecimal employeeSalary;
     public static int count = 1;
 
-    public Employee(String employeeName, String departmentId, int employeeSalary) {
+    public Employee(String employeeName, String departmentId, BigDecimal employeeSalary) {
         this.employeeId = count++;
         this.employeeName = employeeName;
         this.departmentId = departmentId;
@@ -26,7 +29,7 @@ public class Employee {
         return departmentId;
     }
 
-    public int getEmployeeSalary() {
+    public BigDecimal getEmployeeSalary() {
         return employeeSalary;
     }
 
@@ -34,12 +37,25 @@ public class Employee {
         this.departmentId = departmentId;
     }
 
-    public void setEmployeeSalary(int employeeSalary) {
+    public void setEmployeeSalary(BigDecimal employeeSalary) {
         this.employeeSalary = employeeSalary;
     }
 
     @Override
     public String toString() {
-        return employeeId + " " + employeeName + " (" + departmentId + "), зарплата: " + employeeSalary + " руб./мес.";
+        return employeeId + " " + employeeName + " (" + departmentId + "), зарплата: " + employeeSalary.setScale(2) + " руб./мес.";
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Employee employee = (Employee) o;
+        return employeeId == employee.employeeId && employeeName.equals(employee.employeeName) && departmentId.equals(employee.departmentId) && employeeSalary.equals(employee.employeeSalary);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(employeeId, employeeName, employeeId, employeeSalary);
     }
 }
